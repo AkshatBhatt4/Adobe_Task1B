@@ -10,8 +10,8 @@ The goal of Round 1B is to create a system that acts as a personalised document 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/NOVA2OP/adobe_task1A
-cd adobe_task1A
+git clone https://github.com/AkshatBhatt4/Adobe_Task1B
+cd Adobe_Task1B
 ```
 
 ### 2. Build Docker Image
@@ -30,7 +30,7 @@ Place all input PDFs inside the `Collection x/pdfs` path.
 ```bash
 # Test with sample data
 docker run --rm \
-  -v "$PWD/Collection 1:/app/Collection 1" \
+  -v "$PWD:/app" \
   -v "$PWD/models:/app/models" \
   adobe-1b
 ```
@@ -64,7 +64,7 @@ tqdm
    We use **PyMuPDF** to parse PDFs and extract section-level text. It allows us to retrieve both the content and metadata (e.g., page numbers, font sizes). We apply simple heuristics based on font size and line length to identify candidate section titles.
 
 2. **Semantic Embedding Model**  
-   To understand the intent of the persona and match it semantically with section texts, we use the **`all-MiniLM-L6-v2`** model from the `sentence-transformers` library. This lightweight transformer model (only ~80MB) is well-suited for semantic similarity tasks and performs efficiently on CPU.
+   To understand the intent of the persona and match it semantically with section texts, we use the **`all-MiniLM-L6-v2`** model from the `sentence-transformers` library. This lightweight transformer model (only ~80MB) is well-suited for semantic similarity tasks and performs efficiently on a CPU.
 
 3. **Persona and Job-to-be-Done Encoding**  
    The persona and task description are combined into a query and embedded into a semantic vector. Each candidate section text is also encoded using the same model. We calculate the **cosine similarity** between the query and section embeddings to assess relevance.
@@ -73,7 +73,7 @@ tqdm
    Sections are sorted in descending order of relevance score. We select the top-k sections (default = 5) as the most important ones for the given persona and task. These are used in the final JSON output with their document name, page number, and text.
 
 5. **Sub-Section Analysis**  
-   The most relevant section texts are reused as sub-sections for refined analysis. These can optionally be enhanced by sentence-level extraction or summarization techniques.
+   The most relevant section texts are reused as sub-sections for refined analysis. These can optionally be enhanced by sentence-level extraction or summarisation techniques.
 
 6. **Structured Output Generation**  
    The final output JSON includes metadata (persona, job, timestamp), a ranked list of extracted sections, and a corresponding sub-section analysis.
