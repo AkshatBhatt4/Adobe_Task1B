@@ -7,7 +7,7 @@ from sentence_transformers import SentenceTransformer, util
 # Folder paths inside the Docker container
 BASE_DIR = os.path.dirname(__file__)
 MODEL_DIR = os.path.join(BASE_DIR, "models", "all-MiniLM-L6-v2")
-INPUT_DIR = "/app/input/Collection 2"
+INPUT_DIR = "/app/Collection 1"
 PDF_DIR = os.path.join(INPUT_DIR, "PDFs")
 INPUT_JSON = os.path.join(INPUT_DIR, "challenge1b_input.json")
 OUTPUT_DIR = "/app/output"
