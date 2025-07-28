@@ -1,4 +1,4 @@
-**Adobe Hackathon Task 1B**
+*Adobe Hackathon Task 1B*
 
 **Challenge Objective:**
 The goal of Round 1B is to create a system that acts as a personalized document analyst. Given a persona, their job-to-be-done, and a collection of PDF documents, the system should extract the most relevant sections and sub-sections from those documents and return a structured output.
