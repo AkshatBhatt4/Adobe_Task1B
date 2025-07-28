@@ -55,7 +55,7 @@ def generate_output_json(input_files, persona, job, ranked_sections, top_k=5):
 
     output = {
         "metadata": {
-            "documents": input_files,
+            "input_documents": input_files,
             "persona": persona,
             "job_to_be_done": job,
             "processing_timestamp": timestamp
@@ -67,26 +67,31 @@ def generate_output_json(input_files, persona, job, ranked_sections, top_k=5):
     for idx, (score, section) in enumerate(ranked_sections[:top_k]):
         output["extracted_sections"].append({
             "document": section.get("doc", "unknown.pdf"),
-            "page_number": section['page'],
             "section_title": section['text'],
-            "importance_rank": idx + 1
+            "importance_rank": idx + 1,
+            "page_number": section['page']
         })
         output["subsection_analysis"].append({
             "document": section.get("doc", "unknown.pdf"),
-            "page_number": section['page'],
-            "refined_text": section['text']
+            "refined_text": section['text'],
+            "page_number": section['page']
         })
 
     return output
-
 
 def main():
     # Load persona + job from input JSON
     with open(INPUT_JSON, 'r', encoding='utf-8') as f:
         job_data = json.load(f)
 
-    persona = job_data.get("persona", "Generic User")
-    job = job_data.get("job_to_be_done", "Understand document")
+    # Flatten if nested like { "persona": { "role": "..." }, "job_to_be_done": { "task": "..." } }
+    persona = job_data.get("persona")
+    if isinstance(persona, dict):
+        persona = persona.get("role", "Generic User")
+
+    job = job_data.get("job_to_be_done")
+    if isinstance(job, dict):
+        job = job.get("task", "Understand document")
 
     input_files = [f for f in os.listdir(PDF_DIR) if f.lower().endswith(".pdf")]
     all_sections = []
