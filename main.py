@@ -4,10 +4,14 @@ import fitz  # PyMuPDF
 import datetime
 from sentence_transformers import SentenceTransformer, util
 
-INPUT_DIR = "./input"
-OUTPUT_DIR = "./output"
+# Folder paths inside the Docker container
+INPUT_DIR = "/app/input/Collection 1"
+PDF_DIR = os.path.join(INPUT_DIR, "PDFs")
+INPUT_JSON = os.path.join(INPUT_DIR, "challenge1b_input.json")
+OUTPUT_DIR = "/app/output"
+OUTPUT_JSON = os.path.join(OUTPUT_DIR, "challenge1b_output.json")
 
-# Load model
+# Load sentence transformer model (MiniLM)
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
 
@@ -68,31 +72,35 @@ def generate_output_json(input_files, persona, job, ranked_sections, top_k=5):
         output["subsection_analysis"].append({
             "document": section.get("doc", "unknown.pdf"),
             "page_number": section['page'],
-            "refined_text": section['text']  # Could add summarization here
+            "refined_text": section['text']
         })
 
     return output
 
 
 def main():
-    persona = "PhD Researcher in Computational Biology"
-    job = "Prepare a comprehensive literature review focusing on methodologies, datasets, and performance benchmarks"
+    # Load persona + job from input JSON
+    with open(INPUT_JSON, 'r', encoding='utf-8') as f:
+        job_data = json.load(f)
 
-    input_files = [f for f in os.listdir(INPUT_DIR) if f.endswith(".pdf")]
+    persona = job_data.get("persona", "Generic User")
+    job = job_data.get("job_to_be_done", "Understand document")
+
+    input_files = [f for f in os.listdir(PDF_DIR) if f.lower().endswith(".pdf")]
     all_sections = []
 
     for file in input_files:
-        path = os.path.join(INPUT_DIR, file)
+        path = os.path.join(PDF_DIR, file)
         sections = extract_sections_from_pdf(path)
         for sec in sections:
             sec['doc'] = file
         all_sections.extend(sections)
 
     ranked = rank_sections(all_sections, persona, job)
-
     output_json = generate_output_json(input_files, persona, job, ranked)
+
     os.makedirs(OUTPUT_DIR, exist_ok=True)
-    with open(os.path.join(OUTPUT_DIR, "output.json"), "w", encoding='utf-8') as f:
+    with open(OUTPUT_JSON, 'w', encoding='utf-8') as f:
         json.dump(output_json, f, indent=2, ensure_ascii=False)
 
 
