@@ -4,14 +4,10 @@ import fitz  # PyMuPDF
 import datetime
 from sentence_transformers import SentenceTransformer, util
 
-# Folder paths inside the Docker container
+# Local paths
 BASE_DIR = os.path.dirname(__file__)
 MODEL_DIR = os.path.join(BASE_DIR, "models", "all-MiniLM-L6-v2")
-INPUT_DIR = "/app/Collection 1"
-PDF_DIR = os.path.join(INPUT_DIR, "PDFs")
-INPUT_JSON = os.path.join(INPUT_DIR, "challenge1b_input.json")
-OUTPUT_DIR = "/app/Collection 1"
-OUTPUT_JSON = os.path.join(OUTPUT_DIR, "challenge1b_output.json")
+ROOT_INPUT_DIR = BASE_DIR
 
 # Load MiniLM model from local disk
 model = SentenceTransformer(MODEL_DIR)
@@ -79,12 +75,20 @@ def generate_output_json(input_files, persona, job, ranked_sections, top_k=5):
 
     return output
 
-def main():
-    # Load persona + job from input JSON
-    with open(INPUT_JSON, 'r', encoding='utf-8') as f:
+
+def process_collection(collection_path):
+    input_json = os.path.join(collection_path, "challenge1b_input.json")
+    pdf_dir = os.path.join(collection_path, "PDFs")
+    output_json = os.path.join(collection_path, "challenge1b_output.json")
+
+    if not os.path.exists(input_json) or not os.path.exists(pdf_dir):
+        print(f"[!] Skipping {collection_path}: Missing input file or PDFs folder")
+        return
+
+    with open(input_json, 'r', encoding='utf-8') as f:
         job_data = json.load(f)
 
-    # Flatten if nested like { "persona": { "role": "..." }, "job_to_be_done": { "task": "..." } }
+    # Extract job + persona
     persona = job_data.get("persona")
     if isinstance(persona, dict):
         persona = persona.get("role", "Generic User")
@@ -93,22 +97,31 @@ def main():
     if isinstance(job, dict):
         job = job.get("task", "Understand document")
 
-    input_files = [f for f in os.listdir(PDF_DIR) if f.lower().endswith(".pdf")]
+    input_files = [f for f in os.listdir(pdf_dir) if f.lower().endswith(".pdf")]
     all_sections = []
 
     for file in input_files:
-        path = os.path.join(PDF_DIR, file)
+        path = os.path.join(pdf_dir, file)
         sections = extract_sections_from_pdf(path)
         for sec in sections:
             sec['doc'] = file
         all_sections.extend(sections)
 
     ranked = rank_sections(all_sections, persona, job)
-    output_json = generate_output_json(input_files, persona, job, ranked)
+    output_data = generate_output_json(input_files, persona, job, ranked)
 
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    with open(OUTPUT_JSON, 'w', encoding='utf-8') as f:
-        json.dump(output_json, f, indent=2, ensure_ascii=False)
+    with open(output_json, 'w', encoding='utf-8') as f:
+        json.dump(output_data, f, indent=2, ensure_ascii=False)
+
+    print(f"[✓] Finished processing {os.path.basename(collection_path)}")
+
+
+def main():
+    for folder in sorted(os.listdir(ROOT_INPUT_DIR)):
+        if folder.lower().startswith("collection"):
+            full_path = os.path.join(ROOT_INPUT_DIR, folder)
+            if os.path.isdir(full_path):
+                process_collection(full_path)
 
 
 if __name__ == '__main__':
