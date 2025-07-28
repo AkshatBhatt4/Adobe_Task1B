@@ -1,0 +1,79 @@
+{
+  "metadata": {
+    "documents": [
+      "South of France - Cities.pdf",
+      "South of France - Cuisine.pdf",
+      "South of France - History.pdf",
+      "South of France - Restaurants and Hotels.pdf",
+      "South of France - Things to Do.pdf",
+      "South of France - Tips and Tricks.pdf",
+      "South of France - Traditions and Culture.pdf"
+    ],
+    "persona": {
+      "role": "Travel Planner"
+    },
+    "job_to_be_done": {
+      "task": "Plan a trip of 4 days for a group of 10 college friends."
+    },
+    "processing_timestamp": "2025-07-28T17:55:25.851262"
+  },
+  "extracted_sections": [
+    {
+      "document": "South of France - Tips and Tricks.pdf",
+      "page_number": 1,
+      "section_title": "kids, or in a group, this guide will help you make the most of your trip.",
+      "importance_rank": 1
+    },
+    {
+      "document": "South of France - Things to Do.pdf",
+      "page_number": 1,
+      "section_title": "a wealth of activities and experiences for travelers. Whether you're seeking adventure,",
+      "importance_rank": 2
+    },
+    {
+      "document": "South of France - Restaurants and Hotels.pdf",
+      "page_number": 8,
+      "section_title": "make it a great choice for budget-conscious travelers.",
+      "importance_rank": 3
+    },
+    {
+      "document": "South of France - Restaurants and Hotels.pdf",
+      "page_number": 8,
+      "section_title": "make it a great choice for budget-conscious travelers.",
+      "importance_rank": 4
+    },
+    {
+      "document": "South of France - Tips and Tricks.pdf",
+      "page_number": 1,
+      "section_title": "to travel tips, catering to all seasons and various activities. Whether you're traveling solo, with",
+      "importance_rank": 5
+    }
+  ],
+  "subsection_analysis": [
+    {
+      "document": "South of France - Tips and Tricks.pdf",
+      "page_number": 1,
+      "refined_text": "kids, or in a group, this guide will help you make the most of your trip."
+    },
+    {
+      "document": "South of France - Things to Do.pdf",
+      "page_number": 1,
+      "refined_text": "a wealth of activities and experiences for travelers. Whether you're seeking adventure,"
+    },
+    {
+      "document": "South of France - Restaurants and Hotels.pdf",
+      "page_number": 8,
+      "refined_text": "make it a great choice for budget-conscious travelers."
+    },
+    {
+      "document": "South of France - Restaurants and Hotels.pdf",
+      "page_number": 8,
+      "refined_text": "make it a great choice for budget-conscious travelers."
+    },
+    {
+      "document": "South of France - Tips and Tricks.pdf",
+      "page_number": 1,
+      "refined_text": "to travel tips, catering to all seasons and various activities. Whether you're traveling solo, with"
+    }
+  ]
+}
